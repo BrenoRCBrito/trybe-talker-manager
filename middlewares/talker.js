@@ -10,7 +10,7 @@ function authorize(req, res, next) {
     message: 'Token não encontrado',
   }); 
   }
-  if (authorization.length < 16) {
+  if (authorization.length !== 16) {
   return res.status(401).json({
     message: 'Token inválido',
   }); 
@@ -50,8 +50,8 @@ next();
 
 function verifyTalk(req, res, next) {
   const { talk } = req.body;
-  if (!talk) {
- return res.status(400).json({
+  if (!talk || !talk.watchedAt || !talk.rate) {
+ return res.status(400).send({
     message: 'O campo "talk" é obrigatório e "watchedAt" e "rate" não podem ser vazios',
   }); 
 }
@@ -61,12 +61,6 @@ next();
 
 function verifyWatchedAt(req, res, next) {
   const { watchedAt } = req.body.talk;
-  
-if (!watchedAt || watchedAt === '') {
-  return res.status(400).json({
-    message: 'O campo "talk" é obrigatório e "watchedAt" e "rate" não podem ser vazios',
-  });
-}
 if (!DATE_REGEX.test(watchedAt)) {
   return res.status(400).json({
    message: 'O campo "watchedAt" deve ter o formato "dd/mm/aaaa"',
@@ -78,11 +72,7 @@ next();
 function verifyRate(req, res, next) {
   const { rate } = req.body.talk;
   const nRate = Number(rate);
-  if (!rate || rate === '') {
-    return res.status(400).json({
-      message: 'O campo "talk" é obrigatório e "watchedAt" e "rate" não podem ser vazios',
-    });
-  }
+  console.log(rate);
   if (nRate < 1 || nRate > 5) {
     return res.status(400).json({
      message: 'O campo "rate" deve ser um inteiro de 1 à 5',

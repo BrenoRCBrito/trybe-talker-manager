@@ -8,6 +8,7 @@ const { authorize, verifyTalkerAge,
      verifyTalk, verifyWatchedAt, verifyRate } = require('./middlewares/talker');
 const editTalker = require('./middlewares/editTalker');
 const deleteTalker = require('./middlewares/deleteTalker');
+const searchTalker = require('./middlewares/searchTalker');
 
 const app = express();
 app.use(bodyParser.json());
@@ -20,9 +21,7 @@ app.get('/', (_request, response) => {
   response.status(HTTP_OK_STATUS).send();
 });
 
-app.listen(PORT, () => {
-  console.log('Online');
-});
+app.get('/talker/search', authorize, searchTalker);
 
 app.get('/talker', showTalkers);
 
@@ -38,3 +37,7 @@ app.put('/talker/:id', authorize,
 verifyTalkerName, verifyTalkerAge, verifyTalk, verifyWatchedAt, verifyRate, editTalker);
 
 app.delete('/talker/:id', authorize, deleteTalker);
+
+app.listen(PORT, () => {
+  console.log('Online');
+});
